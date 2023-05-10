@@ -1,10 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { collection, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { db } from "./src/config/firebase";
 
 export default function App() {
+  const [produtos, setProdutos] = useState([]);
+
+  async function buscaProduto() {
+    const produtosRef = collection(db, "produto");
+    const produtosSnapshot = await getDoc(produtosRef);
+
+    const produtosList = produtosSnapshot.docs.map((doc) => {
+      return {
+        ...doc.data(),
+        id: doc.id,
+      };
+    });
+    setProdutos(produtosList[0]);
+    console.log(produtosList);
+  }
+
+  useEffect(() => {
+    buscaProduto();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Text>AAAAAAAAA</Text>
+      <Text>Nome do produto {produtos.nome} </Text>
+      <Text>Descrição do produto {produtos.descricao} </Text>
+      <Text>Preço do produto {produtos.preco} </Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -13,8 +39,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
